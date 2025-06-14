@@ -94,11 +94,13 @@ def parse_answer(answer):
     else:
         pred_bin = 0
             
-    match_res = re.search(r'(\d)-(\d)%', pred)
-    if not match_res:
-        match_res = re.search(r'(?:more than )?(\d)+?%', pred)    
-        
-    pred_margin = pred_bin * (int(match_res.group(1)) + 0.5) if match_res else 0.
+    match_res = re.search(r'(\d+)-(\d+)%', pred)
+    if match_res:
+        low, high = int(match_res.group(1)), int(match_res.group(2))
+        pred_margin = pred_bin * (low + high) / 2
+    else:
+        match_res = re.search(r'(?:more than )?(\d+)(?:\+)?%', pred)
+        pred_margin = pred_bin * (int(match_res.group(1)) + 0.5) if match_res else 0.
         
     return {
         "positive developments": pros,
